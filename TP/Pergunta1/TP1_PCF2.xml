@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+chan free, gone, wait; 
+clock cc;</declaration>
+	<template>
+		<name x="5" y="5">Plane</name>
+		<declaration>// Place local declarations here.
+clock cp;
+</declaration>
+		<location id="id0" x="-59" y="0">
+			<name x="-34" y="-17">parked</name>
+		</location>
+		<location id="id1" x="187" y="-144">
+			<name x="161" y="-178">landing</name>
+			<label kind="invariant" x="161" y="-195">cp &lt;= 6</label>
+		</location>
+		<location id="id2" x="433" y="0">
+			<name x="365" y="-17">flying</name>
+			<label kind="invariant" x="365" y="0">cp&lt;=5</label>
+			<committed/>
+		</location>
+		<location id="id3" x="187" y="127">
+			<name x="153" y="76">takingOff</name>
+			<label kind="invariant" x="162" y="93">cp &lt;= 3</label>
+		</location>
+		<location id="id4" x="552" y="119">
+			<name x="493" y="136">noResponseToLand</name>
+		</location>
+		<location id="id5" x="561" y="-127">
+			<name x="518" y="-178">waitingToLand</name>
+			<label kind="invariant" x="544" y="-161">cp&lt;=7</label>
+		</location>
+		<location id="id6" x="-178" y="-110">
+			<name x="-238" y="-161">waitingToTakeOff</name>
+			<label kind="invariant" x="-204" y="-144">cp&lt;=7</label>
+		</location>
+		<location id="id7" x="-178" y="119">
+			<name x="-254" y="136">noResponseToTakeOff</name>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-161" y="25">cp==5</label>
+			<label kind="assignment" x="-161" y="42">cp:=0</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-127" y="85">cp&gt;5</label>
+			<label kind="assignment" x="-127" y="102">cp:=0</label>
+			<nail x="-59" y="119"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-161" y="-51">cp&gt;=5</label>
+			<label kind="assignment" x="-161" y="-34">cp:=0</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id2"/>
+			<label kind="guard" x="510" y="-76">cp&gt;=5</label>
+			<label kind="assignment" x="510" y="-59">cp:=0</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id2"/>
+			<label kind="guard" x="510" y="34">cp==5</label>
+			<label kind="assignment" x="510" y="51">cp:=0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id4"/>
+			<label kind="guard" x="450" y="85">cp&gt;5</label>
+			<label kind="assignment" x="450" y="102">cp:=0</label>
+			<nail x="433" y="119"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="425" y="-170">wait?</label>
+			<label kind="assignment" x="425" y="-153">cp:=0</label>
+			<nail x="433" y="-127"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-76" y="-153">wait?</label>
+			<label kind="assignment" x="-76" y="-136">cp:=0</label>
+			<nail x="-59" y="-110"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="51" y="-144">cp&gt;=4</label>
+			<label kind="synchronisation" x="51" y="-127">gone!</label>
+			<label kind="assignment" x="51" y="-110">cp:=0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="297" y="-119">free?</label>
+			<label kind="assignment" x="297" y="-102">cp:=0</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="323" y="59">cp&gt;=1</label>
+			<label kind="synchronisation" x="323" y="76">gone!</label>
+			<label kind="assignment" x="323" y="93">cp:=0</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="42" y="76">free?</label>
+			<label kind="assignment" x="42" y="93">cp:=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Controller</name>
+		<location id="id8" x="-425" y="-204">
+			<name x="-451" y="-238">available</name>
+		</location>
+		<location id="id9" x="-103" y="-204">
+			<name x="-136" y="-246">occupied</name>
+		</location>
+		<init ref="id8"/>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="33" y="-221">wait!</label>
+			<label kind="assignment" x="33" y="-204">cc:=0</label>
+			<nail x="16" y="-263"/>
+			<nail x="16" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-298" y="-85">gone?</label>
+			<label kind="assignment" x="-298" y="-68">cc:=0</label>
+			<nail x="-281" y="-85"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-289" y="-331">free!</label>
+			<label kind="assignment" x="-289" y="-314">cc:=0</label>
+			<nail x="-272" y="-297"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Process1 = Plane();
+Process2 = Plane();
+Process3 = Controller();
+// List one or more processes to be composed into a system.
+system Process1, Process2, Process3;
+    </system>
+	<queries>
+		<query>
+			<formula>A[] Process3.available imply not(Process1.takingOff &amp;&amp; Process1.landing &amp;&amp; Process2.takingOff &amp;&amp; Process2.landing)
+
+
+
+</formula>
+			<comment>Se a pista estiver livre nenhum dos aviões está a usá-la.</comment>
+		</query>
+		<query>
+			<formula>A[] Process1.parked imply not(Process1.flying &amp;&amp; Process1.landing &amp;&amp; Process1.takingOff &amp;&amp; Process1.waitingToTakeOff &amp;&amp; Process1.noResponseToTakeOff &amp;&amp; Process1.waitingToLand &amp;&amp; Process1.noResponseToLand)
+</formula>
+			<comment>Cada avião só pode estar num estado.</comment>
+		</query>
+		<query>
+			<formula>Process1.flying --&gt; Process1.landing
+</formula>
+			<comment>Se um avião está a voar eventualmente vai aterrar.</comment>
+		</query>
+		<query>
+			<formula>Process1.landing --&gt; Process1.parked</formula>
+			<comment>Se um avião está a aterrar eventualmente vai estar estacionado.</comment>
+		</query>
+		<query>
+			<formula>A[] (Process1.landing or Process1.takingOff) imply not(Process2.landing or Process2.takingOff)</formula>
+			<comment>Os aviões não podem usar a pista ao mesmo tempo.</comment>
+		</query>
+		<query>
+			<formula>Process3.occupied --&gt; Process3.available</formula>
+			<comment>Se a pista está ocupada, enventualmente ficará desocupada.</comment>
+		</query>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment>Não ha deadlocks</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt;Process3.occupied</formula>
+			<comment>A pista pode vir a estar ocupada</comment>
+		</query>
+	</queries>
+</nta>
